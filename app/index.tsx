@@ -25,9 +25,9 @@ export default function Home() {
 
     const isSpendActiveOnDate = (emi: Spend, date: Date) => {
         const start = new Date(emi.startDate);
-        console.log("ednd", emi.endDate, "title" + emi.title)
+        // console.log("ednd", emi.endDate, "title" + emi.title)
         const end = new Date(emi.endDate != null ? emi.endDate : date.setDate(date.getDate()+1));
-        console.log(emi.title,"start: " + start,"end: " + end,"Date: " + date,"Con:" + (start <= date && date <= end))
+        // console.log(emi.title,"start: " + start,"end: " + end,"Date: " + date,"Con:" + (start <= date && date <= end))
         return start <= date && date <= end;
     };
 
