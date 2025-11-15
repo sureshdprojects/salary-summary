@@ -1,24 +1,78 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { Tabs } from "expo-router";
+import { AntDesign, MaterialIcons, Ionicons } from "@expo/vector-icons";
+import { Platform } from "react-native";
+import {AppProvider} from "../state/AppProvider";
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+export default function Layout() {
+    return (
+        <AppProvider>
+            <Tabs
+                screenOptions={{
+                    headerShown: true,
+                    tabBarShowLabel: true,
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+                    // --- Tab Bar Style ---
+                    tabBarStyle: {
+                        position: "absolute",
+                        height: 70,
+                        borderTopWidth: 0,
+                        elevation: 5,
+                        shadowColor: "#000",
+                        shadowOpacity: 0.08,
+                        shadowRadius: 6,
+                        borderRadius: 18,
+                        marginHorizontal: 16,
+                        marginBottom: Platform.OS === "ios" ? 24 : 16,
+                        backgroundColor: "#fff",
+                    },
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+                    tabBarActiveTintColor: "#007AFF",
+                    tabBarInactiveTintColor: "#8A8A8A",
 
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  );
+                    tabBarLabelStyle: {
+                        fontSize: 12,
+                        fontWeight: "600",
+                        marginBottom: 4,
+                    },
+
+                    tabBarItemStyle: {
+                        paddingVertical: 4,
+                    },
+                }}
+            >
+                <Tabs.Screen
+                    name="index"
+                    options={{
+                        title: "Home",
+                        tabBarLabel: "Home",
+                        tabBarIcon: ({ color, size }) => (
+                            <AntDesign name="home" size={22} color={color} />
+                        ),
+                    }}
+                />
+
+                <Tabs.Screen
+                    name="spends"
+                    options={{
+                        title: "Spends",
+                        tabBarLabel: "Spends",
+                        tabBarIcon: ({ color }) => (
+                            <MaterialIcons name="payments" size={24} color={color} />
+                        ),
+                    }}
+                />
+
+                <Tabs.Screen
+                    name="settings"
+                    options={{
+                        title: "Settings",
+                        tabBarLabel: "Settings",
+                        tabBarIcon: ({ color }) => (
+                            <Ionicons name="settings-outline" size={22} color={color} />
+                        ),
+                    }}
+                />
+            </Tabs>
+        </AppProvider>
+    );
 }
