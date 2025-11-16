@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { useApp } from "../state/AppProvider";
+import { useApp } from "@/state/AppProvider";
 import {Spend} from "@/types/types"; // <-- Your hook
 
 export default function Home() {
@@ -14,28 +14,9 @@ export default function Home() {
     const monthlySalary = state.salaryMonthly || 0;
     const spends = state.spends || [];
 
-    // ---------------------------------------------
-    // Determines if an EMI is active on selected date
-    // ---------------------------------------------
-    const isEmiActiveOnDate = (emi: Spend, date: Date) => {
-        const start = new Date(emi.startDate);
-        const end = new Date(emi.endDate != null ? emi.endDate : new Date());
-        return start <= date && date <= end;
-    };
-
-    const isSpendActiveOnDate = (emi: Spend, date: Date) => {
-        const start = new Date(emi.startDate);
-        // console.log("ednd", emi.endDate, "title" + emi.title)
-        const end = new Date(emi.endDate != null ? emi.endDate : date.setDate(date.getDate()+1));
-        // console.log(emi.title,"start: " + start,"end: " + end,"Date: " + date,"Con:" + (start <= date && date <= end))
-        return start <= date && date <= end;
-    };
-
     const isSpendActiveInThisMonthYear = (emi: Spend, date: Date) => {
         const start = new Date(emi.startDate);
-        // console.log("ednd", emi.endDate, "title" + emi.title)
         const end = new Date(emi.endDate != null ? emi.endDate : date.setDate(date.getDate()+1));
-        // console.log(emi.title,"start: " + start,"end: " + end,"Date: " + date,"Con:" + (start <= date && date <= end))
         return (start <= date && date <= end) || (date.getMonth() === end.getMonth() && date.getFullYear() === end.getFullYear());
     };
 
