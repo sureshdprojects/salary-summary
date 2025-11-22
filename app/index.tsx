@@ -3,7 +3,7 @@ import { Spend } from "@/types/types";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useEffect, useState } from "react";
-import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Modal, Platform, ScrollView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { PieChart } from "react-native-gifted-charts";
 
 export default function Home() {
@@ -26,7 +26,17 @@ export default function Home() {
 
     const isSpendActiveInThisMonthYear = (emi: Spend, date: Date) => {
         const start = new Date(emi.startDate);
-        const end = new Date(emi.endDate != null ? emi.endDate : date.setDate(date.getDate() + 1));
+        let end: Date;
+
+        if (emi.endDate) {
+            end = new Date(emi.endDate);
+        } else {
+            // If no end date, assume it's valid for the checked date.
+            // We create a NEW date object to avoid mutating the passed 'date'
+            end = new Date(date);
+            end.setDate(end.getDate() + 1);
+        }
+
         return (start <= date && date <= end) || (date.getMonth() === end.getMonth() && date.getFullYear() === end.getFullYear());
     };
 
@@ -120,44 +130,97 @@ export default function Home() {
             contentContainerStyle={{ paddingBottom: 100 }}
         >
             {/* HEADER: TITLE + DATE PICKER */}
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                <Text style={{ fontSize: 24, fontWeight: "700", color: '#2D3436' }}>
-                    Overview
-                </Text>
+            <View style={{ marginBottom: 24 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                    <Text style={{ fontSize: 30, fontWeight: "800", color: '#2D3436', letterSpacing: -0.5 }}>
+                        Month Overview
+                    </Text>
+                    <TouchableOpacity
+                        onPress={showInfoAlert}
+                        style={{
+                            padding: 8,
+                            backgroundColor: '#F0F2F5',
+                            borderRadius: 20
+                        }}
+                    >
+                        <Ionicons name="information-circle-outline" size={22} color="#636E72" />
+                    </TouchableOpacity>
+                </View>
 
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <TouchableOpacity
                         onPress={() => setShowPicker(true)}
                         style={{
-                            paddingHorizontal: 12,
-                            paddingVertical: 6,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            paddingHorizontal: 16,
+                            paddingVertical: 10,
                             backgroundColor: "#FFF",
-                            borderRadius: 20,
-                            borderColor: "#D0D4DC",
+                            borderRadius: 24,
+                            borderColor: "#E1E4E8",
                             borderWidth: 1,
+                            shadowColor: "#000",
+                            shadowOffset: { width: 0, height: 2 },
+                            shadowOpacity: 0.05,
+                            shadowRadius: 4,
+                            elevation: 2
                         }}
                     >
-                        <Text style={{ fontSize: 14, fontWeight: "600", color: "#1A73E8" }}>
-                            {futureDate.toDateString()} ▾
+                        <Ionicons name="calendar-outline" size={18} color="#1A73E8" style={{ marginRight: 8 }} />
+                        <Text style={{ fontSize: 15, fontWeight: "600", color: "#2D3436" }}>
+                            {futureDate.toDateString()}
                         </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={showInfoAlert}>
-                        <Ionicons name="information-circle-outline" size={24} color="#95A5A6" />
+                        <Ionicons name="chevron-down" size={16} color="#95A5A6" style={{ marginLeft: 8 }} />
                     </TouchableOpacity>
                 </View>
             </View>
 
             {showPicker && (
-                <DateTimePicker
-                    value={futureDate}
-                    mode="date"
-                    display="default"
-                    onChange={(event, selectedDate) => {
-                        setShowPicker(false);
-                        if (selectedDate) setFutureDate(selectedDate);
-                    }}
-                />
+                Platform.OS === 'ios' ? (
+                    <Modal
+                        transparent={true}
+                        animationType="fade"
+                        visible={showPicker}
+                        onRequestClose={() => setShowPicker(false)}
+                    >
+                        <TouchableOpacity
+                            style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' }}
+                            activeOpacity={1}
+                            onPress={() => setShowPicker(false)}
+                        >
+                            <TouchableWithoutFeedback>
+                                <View style={{ backgroundColor: 'white', borderRadius: 20, padding: 20, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 4, elevation: 5 }}>
+                                    <DateTimePicker
+                                        value={futureDate}
+                                        mode="date"
+                                        display="inline"
+                                        themeVariant="light"
+                                        onChange={(event, selectedDate) => {
+                                            if (selectedDate) setFutureDate(selectedDate);
+                                        }}
+                                        style={{ height: 320, width: 320 }}
+                                    />
+                                    <TouchableOpacity
+                                        onPress={() => setShowPicker(false)}
+                                        style={{ marginTop: 10, paddingVertical: 10, paddingHorizontal: 20, backgroundColor: '#1A73E8', borderRadius: 10 }}
+                                    >
+                                        <Text style={{ color: 'white', fontWeight: 'bold' }}>Done</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </TouchableWithoutFeedback>
+                        </TouchableOpacity>
+                    </Modal>
+                ) : (
+                    <DateTimePicker
+                        value={futureDate}
+                        mode="date"
+                        display="default"
+                        onChange={(event, selectedDate) => {
+                            setShowPicker(false);
+                            if (selectedDate) setFutureDate(selectedDate);
+                        }}
+                    />
+                )
             )}
 
             {/* SALARY CARDS ROW */}
