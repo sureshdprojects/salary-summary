@@ -103,43 +103,27 @@ export default function Home() {
             }}
             contentContainerStyle={{ paddingBottom: 40 }}
         >
-            {/* TITLE */}
-            <Text style={{ fontSize: 24, fontWeight: "700", marginBottom: 16 }}>
-                Salary Overview
-            </Text>
-
-            {/* MONTHLY SALARY CARD */}
-            <View
-                style={{
-                    padding: 20,
-                    backgroundColor: "#E5F1FF",
-                    borderRadius: 12,
-                    marginBottom: 20,
-                }}
-            >
-                <Text style={{ fontSize: 16, fontWeight: "600" }}>Monthly Salary</Text>
-                <Text style={{ fontSize: 26, fontWeight: "700", color: "#1A73E8" }}>
-                    ₹{monthlySalary}
+            {/* HEADER: TITLE + DATE PICKER */}
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                <Text style={{ fontSize: 24, fontWeight: "700", color: '#2D3436' }}>
+                    Overview
                 </Text>
+                <TouchableOpacity
+                    onPress={() => setShowPicker(true)}
+                    style={{
+                        paddingHorizontal: 12,
+                        paddingVertical: 6,
+                        backgroundColor: "#FFF",
+                        borderRadius: 20,
+                        borderColor: "#D0D4DC",
+                        borderWidth: 1,
+                    }}
+                >
+                    <Text style={{ fontSize: 14, fontWeight: "600", color: "#1A73E8" }}>
+                        {futureDate.toDateString()} ▾
+                    </Text>
+                </TouchableOpacity>
             </View>
-
-            {/* FUTURE DATE PICKER */}
-            <TouchableOpacity
-                onPress={() => setShowPicker(true)}
-                style={{
-                    padding: 16,
-                    backgroundColor: "#FFF",
-                    borderRadius: 12,
-                    borderColor: "#D0D4DC",
-                    borderWidth: 1,
-                    marginBottom: 20,
-                }}
-            >
-                <Text style={{ fontSize: 14, color: "#555" }}>Select Future Date</Text>
-                <Text style={{ fontSize: 18, fontWeight: "600", marginTop: 6 }}>
-                    {futureDate.toDateString()}
-                </Text>
-            </TouchableOpacity>
 
             {showPicker && (
                 <DateTimePicker
@@ -153,20 +137,63 @@ export default function Home() {
                 />
             )}
 
+            {/* SALARY CARDS ROW */}
+            <View style={{ flexDirection: 'row', gap: 12, marginBottom: 24 }}>
+                {/* MONTHLY SALARY CARD */}
+                <View
+                    style={{
+                        flex: 1,
+                        padding: 16,
+                        backgroundColor: "#E5F1FF",
+                        borderRadius: 16,
+                        justifyContent: 'center'
+                    }}
+                >
+                    <Text style={{ fontSize: 14, fontWeight: "600", color: '#5F6368', marginBottom: 4 }}>Monthly Salary</Text>
+                    <Text style={{ fontSize: 20, fontWeight: "700", color: "#1A73E8" }}>
+                        ₹{monthlySalary}
+                    </Text>
+                </View>
+
+                {/* REMAINING SALARY CARD */}
+                <View
+                    style={{
+                        flex: 1,
+                        padding: 16,
+                        backgroundColor: remainingSalary >= 0 ? "#E6F7E9" : "#FCE8E6",
+                        borderRadius: 16,
+                        justifyContent: 'center',
+                        borderColor: remainingSalary >= 0 ? "transparent" : "#FAD2CF",
+                        borderWidth: remainingSalary >= 0 ? 0 : 1
+                    }}
+                >
+                    <Text style={{ fontSize: 14, fontWeight: "600", color: '#5F6368', marginBottom: 4 }}>Remaining</Text>
+                    <Text
+                        style={{
+                            fontSize: 20,
+                            fontWeight: "700",
+                            color: remainingSalary >= 0 ? "#0E8A3E" : "#D93025",
+                        }}
+                    >
+                        ₹{remainingSalary}
+                    </Text>
+                </View>
+            </View>
+
             {/* CHART SECTION */}
             <View style={{
                 backgroundColor: '#FFF',
                 padding: 20,
-                borderRadius: 16,
+                borderRadius: 24,
                 alignItems: 'center',
-                marginBottom: 20,
+                marginBottom: 24,
                 shadowColor: "#000",
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.05,
-                shadowRadius: 8,
-                elevation: 2
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.06,
+                shadowRadius: 12,
+                elevation: 4
             }}>
-                <Text style={{ fontSize: 18, fontWeight: "600", marginBottom: 20, alignSelf: 'flex-start' }}>
+                <Text style={{ fontSize: 18, fontWeight: "700", marginBottom: 24, alignSelf: 'flex-start', color: '#2D3436' }}>
                     Spending Breakdown
                 </Text>
 
@@ -177,18 +204,18 @@ export default function Home() {
                             donut
                             showGradient
                             sectionAutoFocus
-                            radius={90}
-                            innerRadius={60}
+                            radius={100}
+                            innerRadius={70}
                             innerCircleColor={'#FFF'}
                             centerLabelComponent={() => {
                                 const totalUsed = monthlySalary - remainingSalary;
                                 const base = monthlySalary > 0 ? monthlySalary : (totalUsed || 1);
                                 return (
                                     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                        <Text style={{ fontSize: 22, color: 'black', fontWeight: 'bold' }}>
+                                        <Text style={{ fontSize: 24, color: '#2D3436', fontWeight: '800' }}>
                                             {Math.round((totalUsed / base) * 100)}%
                                         </Text>
-                                        <Text style={{ fontSize: 10, color: 'gray' }}>Used</Text>
+                                        <Text style={{ fontSize: 12, color: '#95A5A6', fontWeight: '600' }}>Used</Text>
                                     </View>
                                 );
                             }}
@@ -196,13 +223,15 @@ export default function Home() {
                         {renderLegend()}
                     </>
                 ) : (
-                    <Text style={{ color: '#999', fontStyle: 'italic' }}>No data to display</Text>
+                    <View style={{ padding: 20, alignItems: 'center' }}>
+                        <Text style={{ color: '#999', fontSize: 16 }}>No spending data yet</Text>
+                    </View>
                 )}
             </View>
 
             {/* CATEGORY DETAILS */}
-            <View style={{ marginTop: 20 }}>
-                <Text style={{ fontSize: 20, fontWeight: "700", marginBottom: 16 }}>
+            <View>
+                <Text style={{ fontSize: 20, fontWeight: "700", marginBottom: 16, color: '#2D3436' }}>
                     Category Details
                 </Text>
 
@@ -303,34 +332,7 @@ export default function Home() {
                 })}
             </View>
 
-            {/* REMAINING SALARY CARD */}
-            <View
-                style={{
-                    padding: 20,
-                    backgroundColor: "#E6F7E9",
-                    borderRadius: 12,
-                    marginTop: 10,
-                    borderColor: "#B6E3C1",
-                    borderWidth: 1,
-                }}
-            >
-                <Text style={{ fontSize: 16, fontWeight: "600" }}>
-                    Remaining Salary on
-                </Text>
-                <Text style={{ fontSize: 15, marginBottom: 10 }}>
-                    {futureDate.toDateString()}
-                </Text>
 
-                <Text
-                    style={{
-                        fontSize: 30,
-                        fontWeight: "800",
-                        color: remainingSalary >= 0 ? "#0E8A3E" : "red",
-                    }}
-                >
-                    ₹{remainingSalary}
-                </Text>
-            </View>
         </ScrollView>
     );
 }
