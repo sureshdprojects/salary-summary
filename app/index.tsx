@@ -237,31 +237,62 @@ export default function Home() {
                             shadowRadius: 4,
                             elevation: 2
                         }}>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            {/* Header Row: Name, Total, Percentage */}
+                            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+                                {/* Left: Name */}
+                                <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
                                     <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: color, marginRight: 8 }} />
                                     <Text style={{ fontSize: 16, fontWeight: "600" }}>{cat === 'SAVING' ? 'Savings' : cat}</Text>
                                 </View>
-                                <Text style={{ fontSize: 16, fontWeight: "700" }}>₹{total}</Text>
+
+                                {/* Center: Total Amount */}
+                                <Text style={{ fontSize: 16, fontWeight: "700", flex: 1, textAlign: 'center' }}>₹{total}</Text>
+
+                                {/* Right: Percentage */}
+                                <View style={{ flex: 1, alignItems: 'flex-end' }}>
+                                    <Text style={{ fontSize: 14, fontWeight: "600", color: '#666' }}>{percentage}%</Text>
+                                </View>
                             </View>
 
-                            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
-                                <View style={{ flex: 1, height: 6, backgroundColor: '#F0F0F0', borderRadius: 3, overflow: 'hidden' }}>
-                                    <View style={{ width: `${percentage}%`, height: '100%', backgroundColor: color }} />
-                                </View>
-                                <Text style={{ marginLeft: 10, fontSize: 12, color: '#666', width: 40 }}>{percentage}%</Text>
+                            {/* Progress Bar */}
+                            <View style={{ height: 6, backgroundColor: '#F0F0F0', borderRadius: 3, overflow: 'hidden', marginBottom: 12 }}>
+                                <View style={{ width: `${percentage}%`, height: '100%', backgroundColor: color }} />
                             </View>
 
                             {/* Individual Spends */}
-                            <View style={{ marginTop: 8, borderTopWidth: 1, borderTopColor: '#F0F0F0', paddingTop: 8 }}>
+                            <View style={{ marginTop: 12, paddingTop: 4 }}>
                                 {categorySpends.map((spend, idx) => {
                                     const spendPercentage = Math.round((Number(spend.amount || 0) / base) * 100);
                                     return (
-                                        <View key={idx} style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
-                                            <Text style={{ fontSize: 14, color: '#444' }}>{spend.title}</Text>
-                                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                                <Text style={{ fontSize: 12, color: '#888', marginRight: 8 }}>{spendPercentage}%</Text>
-                                                <Text style={{ fontSize: 14, fontWeight: "500" }}>₹{spend.amount}</Text>
+                                        <View key={idx} style={{
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            paddingVertical: 12,
+                                            borderTopWidth: 1,
+                                            borderTopColor: '#F5F7FA'
+                                        }}>
+                                            {/* Left: Name */}
+                                            <Text style={{ fontSize: 15, color: '#2D3436', fontWeight: '500', flex: 1, textAlign: 'left' }}>
+                                                {spend.title}
+                                            </Text>
+
+                                            {/* Middle: Amount */}
+                                            <Text style={{ fontSize: 15, fontWeight: "700", color: '#2D3436', flex: 1, textAlign: 'center' }}>
+                                                ₹{spend.amount}
+                                            </Text>
+
+                                            {/* Right: Percentage */}
+                                            <View style={{ flex: 1, alignItems: 'flex-end' }}>
+                                                <View style={{
+                                                    backgroundColor: color + '15',
+                                                    paddingHorizontal: 8,
+                                                    paddingVertical: 3,
+                                                    borderRadius: 6
+                                                }}>
+                                                    <Text style={{ fontSize: 11, fontWeight: '700', color: color }}>
+                                                        {spendPercentage}%
+                                                    </Text>
+                                                </View>
                                             </View>
                                         </View>
                                     );
