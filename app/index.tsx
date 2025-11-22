@@ -1,12 +1,20 @@
 import { useApp } from "@/state/AppProvider";
 import { Spend } from "@/types/types";
+import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { PieChart } from "react-native-gifted-charts";
 
 export default function Home() {
     const { state } = useApp(); // salaryMonthly, spends[] stored here
+
+    const COLORS = {
+        EMI: '#FF5E57',    // Modern Red
+        SAVING: '#00D2D3', // Modern Teal
+        OTHER: '#FFA801',  // Modern Orange/Yellow
+        Remaining: '#546DE5' // Modern Blue
+    };
 
     const [futureDate, setFutureDate] = useState(new Date());
     const [showPicker, setShowPicker] = useState(false);
@@ -57,10 +65,10 @@ export default function Home() {
 
         // Colors
         const colors: Record<string, string> = {
-            EMI: '#FF6B6B',    // Red/Coral
-            SAVING: '#4ECDC4', // Teal
-            OTHER: '#FFE66D',  // Yellow
-            Remaining: '#1A535C' // Dark Teal/Blue
+            EMI: COLORS.EMI,
+            SAVING: COLORS.SAVING,
+            OTHER: COLORS.OTHER,
+            Remaining: COLORS.Remaining
         };
 
         const rawData = [
@@ -94,6 +102,14 @@ export default function Home() {
         );
     };
 
+    const showInfoAlert = () => {
+        Alert.alert(
+            "Calculation Info",
+            "All calculations are based on the selected month's summary, not the specific date.",
+            [{ text: "OK" }]
+        );
+    };
+
     return (
         <ScrollView
             style={{
@@ -101,28 +117,35 @@ export default function Home() {
                 padding: 20,
                 backgroundColor: "#F7F9FC",
             }}
-            contentContainerStyle={{ paddingBottom: 40 }}
+            contentContainerStyle={{ paddingBottom: 100 }}
         >
             {/* HEADER: TITLE + DATE PICKER */}
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                 <Text style={{ fontSize: 24, fontWeight: "700", color: '#2D3436' }}>
                     Overview
                 </Text>
-                <TouchableOpacity
-                    onPress={() => setShowPicker(true)}
-                    style={{
-                        paddingHorizontal: 12,
-                        paddingVertical: 6,
-                        backgroundColor: "#FFF",
-                        borderRadius: 20,
-                        borderColor: "#D0D4DC",
-                        borderWidth: 1,
-                    }}
-                >
-                    <Text style={{ fontSize: 14, fontWeight: "600", color: "#1A73E8" }}>
-                        {futureDate.toDateString()} ▾
-                    </Text>
-                </TouchableOpacity>
+
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <TouchableOpacity
+                        onPress={() => setShowPicker(true)}
+                        style={{
+                            paddingHorizontal: 12,
+                            paddingVertical: 6,
+                            backgroundColor: "#FFF",
+                            borderRadius: 20,
+                            borderColor: "#D0D4DC",
+                            borderWidth: 1,
+                        }}
+                    >
+                        <Text style={{ fontSize: 14, fontWeight: "600", color: "#1A73E8" }}>
+                            {futureDate.toDateString()} ▾
+                        </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={showInfoAlert}>
+                        <Ionicons name="information-circle-outline" size={24} color="#95A5A6" />
+                    </TouchableOpacity>
+                </View>
             </View>
 
             {showPicker && (
@@ -172,7 +195,7 @@ export default function Home() {
                         style={{
                             fontSize: 20,
                             fontWeight: "700",
-                            color: remainingSalary >= 0 ? "#0E8A3E" : "#D93025",
+                            color: remainingSalary >= 0 ? COLORS.Remaining : "#D93025",
                         }}
                     >
                         ₹{remainingSalary}
@@ -248,9 +271,9 @@ export default function Home() {
 
                     // Colors mapping
                     const colors: Record<string, string> = {
-                        EMI: '#FF6B6B',
-                        SAVING: '#4ECDC4',
-                        OTHER: '#FFE66D'
+                        EMI: COLORS.EMI,
+                        SAVING: COLORS.SAVING,
+                        OTHER: COLORS.OTHER
                     };
                     const color = colors[cat] || '#ccc';
 
