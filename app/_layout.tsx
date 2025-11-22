@@ -1,7 +1,7 @@
+import { AntDesign, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
-import { AntDesign, MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { Platform } from "react-native";
-import {AppProvider} from "../state/AppProvider";
+import { AppProvider } from "../state/AppProvider";
 
 export default function Layout() {
     return (
@@ -20,9 +20,9 @@ export default function Layout() {
                         shadowColor: "#000",
                         shadowOpacity: 0.08,
                         shadowRadius: 6,
-                        borderRadius: 18,
-                        marginHorizontal: 16,
-                        marginBottom: Platform.OS === "ios" ? 24 : 16,
+                        borderRadius: Platform.OS === "ios" ? 18 : 0,
+                        marginHorizontal: Platform.OS === "ios" ? 16 : 0,
+                        marginBottom: Platform.OS === "ios" ? 24 : 0,
                         backgroundColor: "#fff",
                     },
 
